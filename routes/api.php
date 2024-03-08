@@ -7,6 +7,7 @@ use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\MemoController;
 use App\Http\Controllers\PlantController;
 use App\Http\Controllers\QualityIssueController;
+use App\Http\Controllers\TrackRecordIssueController;
 use App\Models\Information;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::get('/', [ManageUserController::class, 'getAllUsersWithRoles']);
         Route::post('/change-role', [ManageUserController::class, 'changeUserRole']);
         Route::post('/toggle-approval-status', [ManageUserController::class, 'toggleApprovalStatus']);
+    });
+
+    Route::prefix('track-records')->group(function () {
+        Route::get('/', [TrackRecordIssueController::class, 'index']);
+        Route::get('/{id}', [TrackRecordIssueController::class, 'show']);
+        Route::put('/{id}', [TrackRecordIssueController::class, 'update']);
     });
 
     Route::prefix('manage-plant')->group(function () {

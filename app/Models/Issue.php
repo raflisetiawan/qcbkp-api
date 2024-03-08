@@ -15,7 +15,11 @@ class Issue extends Model
         'shift',
         'issue_date',
         'quality_control_name',
-        'qc_image'
+        'qc_image',
+        'closed',
+        'closed_date',
+        'todos',
+        'quality_control_verification'
     ];
     protected $appends = ['qc_image_path'];
 

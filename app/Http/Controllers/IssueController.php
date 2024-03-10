@@ -9,6 +9,7 @@ use App\Models\Issue;
 use App\Models\QualityIssue;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -27,6 +28,8 @@ class IssueController extends Controller
             'issues' => $issues,
         ], 200);
     }
+
+
 
     /**
      * Menampilkan semua isu berdasarkan waktu / issue_date.
@@ -47,18 +50,39 @@ class IssueController extends Controller
             $date = Carbon::now()->startOfDay();
         }
 
-        $issues = Issue::whereDate('issue_date', $date)->with('plant')->when(
-            $request->has('plant_id'),
-            function ($query) use ($request) {
-                $query->where('plant_id', $request->input('plant_id'));
-            }
-        )->get();
+        $issues = Issue::whereDate('issue_date', $date)
+            ->with('plant')
+            ->when(
+                $request->has('plant_id'),
+                function ($query) use ($request) {
+                    $query->where('plant_id', $request->input('plant_id'));
+                }
+            )
+            ->get();
+
+        // Transformasi nilai kolom closed ke dalam bentuk true/false
+        $issues = $this->transformClosedStatus($issues);
 
         return response()->json([
             'success' => true,
             'issues' => $issues,
         ], 200);
     }
+
+    /**
+     * Transformasi nilai kolom closed ke dalam bentuk true/false.
+     *
+     * @param \Illuminate\Support\Collection $issues
+     * @return \Illuminate\Support\Collection
+     */
+    private function transformClosedStatus(Collection $issues)
+    {
+        return $issues->map(function ($issue) {
+            $issue->closed = (bool)$issue->closed;
+            return $issue;
+        });
+    }
+
 
     /**
      * Menyimpan isu baru.

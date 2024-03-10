@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::get('/', [TrackRecordIssueController::class, 'index']);
         Route::get('/{id}', [TrackRecordIssueController::class, 'show']);
         Route::put('/{id}', [TrackRecordIssueController::class, 'update']);
+        Route::put('/toggle-closed/{id}', [TrackRecordIssueController::class, 'toggleClosed']);
     });
 
     Route::prefix('manage-plant')->group(function () {

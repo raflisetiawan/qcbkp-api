@@ -31,6 +31,9 @@ class TrackRecordIssueController extends Controller
             });
         }
 
+        // Tambahkan kondisi jika closed adalah false
+        $query->where('closed', false);
+
         // Eksekusi query dan kirimkan hasil sebagai respons JSON
         $issues = $query->get();
 
@@ -39,6 +42,7 @@ class TrackRecordIssueController extends Controller
             'issues' => $issues,
         ]);
     }
+
 
     /**
      * Retrieve details of a specific issue with related quality issues.
@@ -84,6 +88,38 @@ class TrackRecordIssueController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Issue updated successfully.',
+            'issue' => $issue,
+        ]);
+    }
+
+    /**
+     * Toggle the 'closed' status of the specified issue.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleClosed($id)
+    {
+        // Cari isu berdasarkan ID
+        $issue = Issue::findOrFail($id);
+
+        // Toggle closed status
+        $issue->closed = !$issue->closed;
+
+        // Jika closed true, atur closed_date ke saat ini
+        if ($issue->closed) {
+            $issue->closed_date = now()->toDateString();
+        } else {
+            // Jika closed false, atur closed_date menjadi null
+            $issue->closed_date = null;
+        }
+
+        // Simpan perubahan
+        $issue->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Issue closed status toggled successfully.',
             'issue' => $issue,
         ]);
     }

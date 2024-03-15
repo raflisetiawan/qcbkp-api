@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Issue;
+use App\Models\QualityIssue;
 
 class TrackRecordIssueController extends Controller
 {
@@ -20,15 +21,12 @@ class TrackRecordIssueController extends Controller
         $problem = $request->input('problem');
 
         // Mengambil semua isu dengan relasi kualitas isu
-        $query = Issue::with(['qualityIssues:id,issue_id,problem'])
-            ->select('id', 'issue_date', 'closed', 'closed_date', 'todos', 'quality_control_verification')
-            ->orderBy('issue_date', 'desc');
+        $query = QualityIssue::select('id', 'closed', 'closed_date', 'todos', 'quality_control_verification', 'created_at', 'problem')
+            ->orderBy('created_at', 'desc');
 
         // Jika ada parameter 'problem', tambahkan filter ke query
         if ($problem) {
-            $query->whereHas('qualityIssues', function ($q) use ($problem) {
-                $q->where('problem', 'like', '%' . $problem . '%');
-            });
+            $query->where('problem', 'like', '%' . $problem . '%');
         }
 
         // Tambahkan kondisi jika closed adalah false
@@ -53,7 +51,7 @@ class TrackRecordIssueController extends Controller
     public function show($id)
     {
         // Mengambil isu berdasarkan ID dengan relasi kualitas isu
-        $issue = Issue::select('id', 'issue_date', 'closed', 'closed_date', 'todos', 'quality_control_verification')
+        $issue = QualityIssue::select('id', 'closed', 'closed_date', 'todos', 'quality_control_verification')
             ->findOrFail($id);
 
         return response()->json([
@@ -80,14 +78,14 @@ class TrackRecordIssueController extends Controller
         ]);
 
         // Cari isu berdasarkan ID
-        $issue = Issue::findOrFail($id);
+        $issue = QualityIssue::findOrFail($id);
 
         // Update isu dengan data baru
         $issue->update($request->all());
 
         return response()->json([
             'success' => true,
-            'message' => 'Issue updated successfully.',
+            'message' => 'Quality Issue updated successfully.',
             'issue' => $issue,
         ]);
     }
@@ -101,26 +99,26 @@ class TrackRecordIssueController extends Controller
     public function toggleClosed($id)
     {
         // Cari isu berdasarkan ID
-        $issue = Issue::findOrFail($id);
+        $qualityIssue = QualityIssue::findOrFail($id);
 
         // Toggle closed status
-        $issue->closed = !$issue->closed;
+        $qualityIssue->closed = !$qualityIssue->closed;
 
         // Jika closed true, atur closed_date ke saat ini
-        if ($issue->closed) {
-            $issue->closed_date = now()->toDateString();
+        if ($qualityIssue->closed) {
+            $qualityIssue->closed_date = now()->toDateString();
         } else {
             // Jika closed false, atur closed_date menjadi null
-            $issue->closed_date = null;
+            $qualityIssue->closed_date = null;
         }
 
         // Simpan perubahan
-        $issue->save();
+        $qualityIssue->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Issue closed status toggled successfully.',
-            'issue' => $issue,
+            'issue' => $qualityIssue,
         ]);
     }
 }

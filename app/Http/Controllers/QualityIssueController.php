@@ -40,6 +40,8 @@ class QualityIssueController extends Controller
             'trouble_duration_minutes' => 'required|numeric|min:0',
             'solution' => 'required|string',
             'impact' => 'required|string',
+            'closed' => 'required|boolean',
+            'closed_date' => 'nullable|date',
         ]);
 
         $qualityIssue = QualityIssue::create([
@@ -50,7 +52,10 @@ class QualityIssueController extends Controller
             'trouble_duration_minutes' => $request->trouble_duration_minutes,
             'solution' => $request->solution,
             'impact' => $request->impact,
+            'closed' => $request->closed,
+            'closed_date' => $request->closed_date,
         ]);
+
 
         return response()->json([
             'success' => true,
@@ -67,11 +72,14 @@ class QualityIssueController extends Controller
      */
     public function show(QualityIssue $qualityIssue)
     {
-        $issue = Issue::findOrFail($qualityIssue->issue_id);
-        $user = User::findOrFail($qualityIssue->user_id);
+        $issue = Issue::with('plant')->findOrFail($qualityIssue->issue_id);
+        $user = User::findOrFail($issue->user_id);
         return response()->json([
             'issue' => [
                 'shift' => $issue->shift,
+                'plant_name' => $issue->plant->name,
+                'quality_control_name' => $issue->quality_control_name,
+                'qc_image' => $issue->qc_image_path,
             ],
             'success' => true,
             'quality_issue' => [
@@ -85,7 +93,11 @@ class QualityIssueController extends Controller
                 'shift' => $issue->shift,
                 'issue_date' => $issue->issue_date,
                 'user_name' => $user->name,
-                'created_at' => $qualityIssue->created_at
+                'todos' => $qualityIssue->todos,
+                'quality_control_verification' => $qualityIssue->quality_control_verification,
+                'closed' => $qualityIssue->closed,
+                'closed_date' => $qualityIssue->closed_date,
+                'created_at' => $qualityIssue->created_at,
             ],
         ], 200);
     }
@@ -105,10 +117,11 @@ class QualityIssueController extends Controller
             'trouble_duration_minutes' => 'numeric|min:0',
             'solution' => 'string',
             'impact' => 'string',
+            'closed' => 'boolean'
         ]);
 
         $qualityIssue->update($request->only([
-            'problem', 'machine_performance', 'trouble_duration_minutes', 'solution', 'impact'
+            'problem', 'machine_performance', 'trouble_duration_minutes', 'solution', 'impact', 'closed'
         ]));
 
         return response()->json([
@@ -144,8 +157,15 @@ class QualityIssueController extends Controller
     {
         $qualityIssues = QualityIssue::where('issue_id', $issueId)->get();
 
+        // Mengonversi nilai 'closed' menjadi boolean
+        $qualityIssues->transform(function ($qualityIssue) {
+            $qualityIssue->closed = (bool) $qualityIssue->closed;
+            return $qualityIssue;
+        });
+
         // Retrieve the related issue information
         $issue = Issue::find($issueId);
+        $issue->closed = (bool)$issue->closed;
 
         return response()->json([
             'success' => true,

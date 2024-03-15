@@ -16,6 +16,10 @@ class QualityIssue extends Model
         'trouble_duration_minutes',
         'solution',
         'impact',
+        'closed',
+        'closed_date',
+        'todos',
+        'quality_control_verification'
     ];
 
     public function issue()

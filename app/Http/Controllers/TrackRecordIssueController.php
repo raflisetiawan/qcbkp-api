@@ -21,16 +21,26 @@ class TrackRecordIssueController extends Controller
         $problem = $request->input('problem');
 
         // Mengambil semua isu dengan relasi kualitas isu
-        $query = QualityIssue::select('id', 'closed', 'closed_date', 'todos', 'quality_control_verification', 'created_at', 'problem')
-            ->orderBy('created_at', 'desc');
+        $query = QualityIssue::select(
+            'quality_issues.id',
+            'quality_issues.closed',
+            'quality_issues.closed_date',
+            'quality_issues.todos',
+            'quality_issues.quality_control_verification',
+            'quality_issues.created_at',
+            'quality_issues.problem',
+            'issues.issue_date' // Tambahkan kolom issue_date dari tabel Issue
+        )
+            ->leftJoin('issues', 'quality_issues.issue_id', '=', 'issues.id') // Join dengan tabel Issue
+            ->orderBy('quality_issues.created_at', 'desc'); // Urutkan berdasarkan tanggal pembuatan quality issue
 
         // Jika ada parameter 'problem', tambahkan filter ke query
         if ($problem) {
-            $query->where('problem', 'like', '%' . $problem . '%');
+            $query->where('quality_issues.problem', 'like', '%' . $problem . '%');
         }
 
         // Tambahkan kondisi jika closed adalah false
-        $query->where('closed', false);
+        $query->where('quality_issues.closed', false);
 
         // Eksekusi query dan kirimkan hasil sebagai respons JSON
         $issues = $query->get();

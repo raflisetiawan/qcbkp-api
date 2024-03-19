@@ -3,18 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Information;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InformationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the information based on the specified date range.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $information = Information::all();
+        // Get the start date and end date from the request parameters
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Set the default date range to one week if not provided
+        if (empty($startDate) && empty($endDate)) {
+            $startDate = Carbon::now()->subDays(7)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        } else {
+            // Parse the start and end dates using Carbon
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+        }
+
+        // Retrieve information based on the specified date range
+        $information = Information::whereBetween('information_date', [$startDate, $endDate])->get();
+
         return response()->json(['data' => $information]);
     }
 

@@ -186,6 +186,8 @@ class TrackRecordIssueController extends Controller
             if ($discoveryFile) {
                 // Buat path lengkap ke file discovery
                 $filePath = public_path("storage/discovery_files/{$discoveryFile}");
+                $excelData = file_get_contents($filePath);
+                $base64Excel = base64_encode($excelData);
 
                 if (file_exists($filePath)) {
                     // Load file Excel menggunakan PHPExcel
@@ -209,7 +211,7 @@ class TrackRecordIssueController extends Controller
                     return response()->json([
                         'success' => true,
                         'pdf_base64' => $base64Pdf,
-                        'fileurl' => asset('/storage/discovery_files/' . $discoveryFile)
+                        'excel_base64' => $base64Excel,
                     ]);
                 } else {
                     // Jika file discovery_file tidak ditemukan, kirim respons error

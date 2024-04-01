@@ -98,6 +98,7 @@ class QualityIssueController extends Controller
                 'closed' => $qualityIssue->closed,
                 'closed_date' => $qualityIssue->closed_date,
                 'created_at' => $qualityIssue->created_at,
+                'discovery_file' => $qualityIssue->discovery_file,
             ],
         ], 200);
     }

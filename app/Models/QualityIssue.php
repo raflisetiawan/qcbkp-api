@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,11 +20,23 @@ class QualityIssue extends Model
         'closed',
         'closed_date',
         'todos',
-        'quality_control_verification'
+        'quality_control_verification',
+        'discovery_file'
     ];
 
     public function issue()
     {
         return $this->belongsTo(Issue::class);
     }
+
+    // protected function discoveryFile(): Attribute
+    // {
+    //     return Attribute::make(function ($discovery_file) {
+    //         if ($discovery_file) {
+    //             return asset('/storage/discovery_files/' . $discovery_file);
+    //         } else {
+    //             return null;
+    //         }
+    //     });
+    // }
 }

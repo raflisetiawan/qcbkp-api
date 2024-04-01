@@ -167,4 +167,47 @@ class AuthController extends Controller
             'user' => $userData,
         ], 200);
     }
+
+    /**
+ * Mengganti password pengguna.
+ *
+ * Metode ini memvalidasi permintaan dan kemudian mengubah password pengguna yang sesuai.
+ *
+ * @param Request $request Permintaan yang masuk.
+ * @return JsonResponse JSON response yang berisi pesan sukses atau error.
+ */
+public function change_password(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => 'required|min:6',
+        'confirm_password' => 'required|same:new_password',
+    ], [
+        'confirm_password.same' => 'Konfirmasi password harus sama dengan password baru.',
+    ]);
+
+
+    $user = $request->user();
+
+    // Sementara memperlihatkan password yang di-hidden
+    $user->makeVisible('password');
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        // Mengembalikan password ke hidden
+        $user->makeHidden('password');
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Password lama tidak sesuai.'
+        ], 400);
+    }
+
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Password berhasil diubah.'
+    ], 200);
+}
 }

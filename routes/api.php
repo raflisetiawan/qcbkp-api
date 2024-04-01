@@ -8,8 +8,6 @@ use App\Http\Controllers\MemoController;
 use App\Http\Controllers\PlantController;
 use App\Http\Controllers\QualityIssueController;
 use App\Http\Controllers\TrackRecordIssueController;
-use App\Models\Information;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +38,7 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getUser
  * @param array $callback The callback function or controller method to be executed.
  * @return void
  */
+Route::get('/file/getexcel', [TrackRecordIssueController::class, 'getExcelFromUrl']);
 Route::post('/signup', [AuthController::class, 'sign_up']);
 Route::post('/signin', [AuthController::class, 'sign_in']);
 Route::post('/signout', [AuthController::class, 'sign_out']);
@@ -79,6 +78,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/informations/count', [InformationController::class, 'getInformationsCount']);
 });
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/user/change-password', [AuthController::class, 'change_password']);
+
     Route::post('/issue', [IssueController::class, 'store']);
     Route::get('/issue', [IssueController::class, 'index']);
     Route::delete('/issue/{issue}', [IssueController::class, 'destroy']);
@@ -117,3 +118,5 @@ Route::middleware(['auth:sanctum', 'manager'])->group(function () {
 
     Route::delete('/memo/{memo}', [MemoController::class, 'destroy']);
 });
+
+

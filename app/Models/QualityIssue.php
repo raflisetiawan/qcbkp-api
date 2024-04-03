@@ -5,10 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class QualityIssue extends Model
 {
     use HasFactory;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($qualityIssue) {
+            error_log($qualityIssue);
+            // Check if discovery_file exists
+            if ($qualityIssue->discovery_file) {
+                error_log('ok');
+                // Delete the discovery_file from storage
+                Storage::disk('public')->delete("discovery_files/{$qualityIssue->discovery_file}");
+                // Storage::delete("discovery_files/{$qualityIssue->discovery_file}");
+            }
+        });
+    }
+
+
     protected $fillable = [
         'issue_id',
         'user_id',

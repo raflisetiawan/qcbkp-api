@@ -106,8 +106,8 @@ class TrackRecordIssueController extends Controller
             // Ambil file yang diunggah
             $file = $request->file('discovery_file');
 
-            // Mengganti spasi dalam nama file dengan karakter underscore
-            $fileName = Str::of($file->getClientOriginalName())->replace(' ', '_');
+            // Membuat nama file yang unik dengan menggunakan timestamp
+            $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
 
             // Simpan file ke direktori yang ditentukan dengan nama baru
             $file->storeAs('public/discovery_files', $fileName);

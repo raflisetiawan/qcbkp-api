@@ -94,10 +94,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/quality-issue', [QualityIssueController::class, 'store']);
     Route::get('/quality-issue', [QualityIssueController::class, 'index']);
+    Route::get('/quality-issue/get-sugestion/suggestions', [QualityIssueController::class, 'getProblemSuggestions']);
     Route::delete('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'destroy']);
     Route::patch('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'update']);
     Route::get('/quality-issues/{issueId}', [QualityIssueController::class, 'getQualityIssuesByIssueId']);
     Route::get('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'show']);
+
 
     Route::put('/edit-user-profile', [ManageUserController::class, 'editUserProfile']);
 

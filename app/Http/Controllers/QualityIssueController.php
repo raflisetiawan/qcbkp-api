@@ -174,4 +174,32 @@ class QualityIssueController extends Controller
             'quality_issues' => $qualityIssues,
         ], 200);
     }
+
+    public function getProblemSuggestions(Request $request)
+{
+    // Ambil inputan pengguna
+    error_log('ok');
+    $input = $request->input('query');
+
+    // Jika input pengguna memiliki lebih dari atau sama dengan 5 karakter
+    if (strlen($input) >= 5) {
+        // Cari masukan sebelumnya yang cocok dari kolom 'problem'
+        $suggestions = QualityIssue::select('problem')
+            ->where('problem', 'like', '%' . $input . '%')
+            ->distinct()
+            ->take(5) // Ambil maksimal 5 masukan
+            ->get()
+            ->pluck('problem');
+
+        return response()->json([
+            'success' => true,
+            'suggestions' => $suggestions,
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Input must have at least 5 characters.',
+    ], 422);
+}
 }

@@ -176,30 +176,81 @@ class QualityIssueController extends Controller
     }
 
     public function getProblemSuggestions(Request $request)
-{
-    // Ambil inputan pengguna
-    error_log('ok');
-    $input = $request->input('query');
+    {
+        // Ambil inputan pengguna
+        $input = $request->input('query');
 
-    // Jika input pengguna memiliki lebih dari atau sama dengan 5 karakter
-    if (strlen($input) >= 5) {
-        // Cari masukan sebelumnya yang cocok dari kolom 'problem'
-        $suggestions = QualityIssue::select('problem')
-            ->where('problem', 'like', '%' . $input . '%')
-            ->distinct()
-            ->take(5) // Ambil maksimal 5 masukan
-            ->get()
-            ->pluck('problem');
+        // Jika input pengguna memiliki lebih dari atau sama dengan 5 karakter
+        if (strlen($input) >= 5) {
+            // Cari masukan sebelumnya yang cocok dari kolom 'problem'
+            $suggestions = QualityIssue::select('problem')
+                ->where('problem', 'like', '%' . $input . '%')
+                ->distinct()
+                ->take(5) // Ambil maksimal 5 masukan
+                ->get()
+                ->pluck('problem');
+
+            return response()->json([
+                'success' => true,
+                'suggestions' => $suggestions,
+            ]);
+        }
 
         return response()->json([
-            'success' => true,
-            'suggestions' => $suggestions,
-        ]);
+            'success' => false,
+            'message' => 'Input must have at least 5 characters.',
+        ], 422);
     }
+    public function getSolutionsSuggestions(Request $request)
+    {
+        // Ambil inputan pengguna
+        $input = $request->input('query');
 
-    return response()->json([
-        'success' => false,
-        'message' => 'Input must have at least 5 characters.',
-    ], 422);
-}
+        // Jika input pengguna memiliki lebih dari atau sama dengan 5 karakter
+        if (strlen($input) >= 5) {
+            // Cari masukan sebelumnya yang cocok dari kolom 'problem'
+            $suggestions = QualityIssue::select('solution')
+                ->where('solution', 'like', '%' . $input . '%')
+                ->distinct()
+                ->take(5) // Ambil maksimal 5 masukan
+                ->get()
+                ->pluck('solution');
+
+            return response()->json([
+                'success' => true,
+                'suggestions' => $suggestions,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Input must have at least 5 characters.',
+        ], 422);
+    }
+    public function getImpactSuggestions(Request $request)
+    {
+        // Ambil inputan pengguna
+        $input = $request->input('query');
+
+        // Jika input pengguna memiliki lebih dari atau sama dengan 5 karakter
+        if (strlen($input) >= 5) {
+            // Cari masukan sebelumnya yang cocok dari kolom 'problem'
+            $suggestions = QualityIssue::select('impact')
+                ->where('impact', 'like', '%' . $input . '%')
+                ->distinct()
+                ->take(5) // Ambil maksimal 5 masukan
+                ->get()
+                ->pluck('impact');
+
+            return response()->json([
+                'success' => true,
+                'suggestions' => $suggestions,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Input must have at least 5 characters.',
+        ], 422);
+    }
 }

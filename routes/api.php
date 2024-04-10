@@ -95,6 +95,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/quality-issue', [QualityIssueController::class, 'store']);
     Route::get('/quality-issue', [QualityIssueController::class, 'index']);
     Route::get('/quality-issue/get-sugestion/suggestions', [QualityIssueController::class, 'getProblemSuggestions']);
+    Route::get('/quality-issue/get-sugestion-solution/suggestions', [QualityIssueController::class, 'getSolutionsSuggestions']);
+    Route::get('/quality-issue/get-sugestion-impact/suggestions', [QualityIssueController::class, 'getImpactSuggestions']);
     Route::delete('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'destroy']);
     Route::patch('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'update']);
     Route::get('/quality-issues/{issueId}', [QualityIssueController::class, 'getQualityIssuesByIssueId']);

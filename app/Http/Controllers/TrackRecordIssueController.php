@@ -96,8 +96,8 @@ class TrackRecordIssueController extends Controller
         // Cari isu berdasarkan ID
         $issue = QualityIssue::findOrFail($id);
 
-          // Jika ada file discovery yang diunggah, simpan file tersebut
-          if ($request->hasFile('discovery_file')) {
+        // Jika ada file discovery yang diunggah, simpan file tersebut
+        if ($request->hasFile('discovery_file')) {
             // Hapus gambar lama jika ada
             if ($issue->discovery_file) {
                 Storage::delete('public/discovery_files/' . $issue->discovery_file);
@@ -166,7 +166,7 @@ class TrackRecordIssueController extends Controller
         ]);
     }
 
-   /**
+    /**
      * Retrieve excel file from URL.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -184,6 +184,7 @@ class TrackRecordIssueController extends Controller
 
             // Jika file discovery_file ada
             if ($discoveryFile) {
+                ini_set('max_execution_time', '20');
                 // Buat path lengkap ke file discovery
                 $filePath = public_path("storage/discovery_files/{$discoveryFile}");
                 $excelData = file_get_contents($filePath);
@@ -223,6 +224,34 @@ class TrackRecordIssueController extends Controller
             }
         } catch (\Exception $e) {
             // Tangani kesalahan dan kirim respons error
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getExcelFileFromUrl(Request $request)
+    {
+        try {
+            $id = $request->id;
+
+            // Ambil file discovery_file dari QualityIssue berdasarkan id
+            $qualityIssue = QualityIssue::findOrFail($id);
+            $discoveryFile = $qualityIssue->discovery_file;
+
+            if ($discoveryFile) {
+                // Buat path lengkap ke file discovery
+                $filePath = public_path("storage/discovery_files/{$discoveryFile}");
+                $excelData = file_get_contents($filePath);
+                $base64Excel = base64_encode($excelData);
+
+                return response()->json([
+                    'success' => true,
+                    'excel_base64' => $base64Excel,
+                ]);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

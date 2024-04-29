@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getUser
  * @return void
  */
 Route::get('/file/getexcel', [TrackRecordIssueController::class, 'getExcelFromUrl']);
+Route::get('/file/getexcelfile', [TrackRecordIssueController::class, 'getExcelFileFromUrl']);
 Route::post('/signup', [AuthController::class, 'sign_up']);
 Route::post('/signin', [AuthController::class, 'sign_in']);
 Route::post('/signout', [AuthController::class, 'sign_out']);

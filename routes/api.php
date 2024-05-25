@@ -38,8 +38,7 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getUser
  * @param array $callback The callback function or controller method to be executed.
  * @return void
  */
-Route::get('/file/getexcel', [TrackRecordIssueController::class, 'getExcelFromUrl']);
-Route::get('/file/getexcelfile', [TrackRecordIssueController::class, 'getExcelFileFromUrl']);
+
 Route::post('/signup', [AuthController::class, 'sign_up']);
 Route::post('/signin', [AuthController::class, 'sign_in']);
 Route::post('/signout', [AuthController::class, 'sign_out']);
@@ -83,7 +82,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::post('/quality-issue', [QualityIssueController::class, 'store']);
     Route::delete('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'destroy']);
-    Route::put('/edit-user-profile', [ManageUserController::class, 'editUserProfile']);
+
 
     Route::patch('/issue/{issue}', [IssueController::class, 'update']);
 
@@ -116,6 +115,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/memo/{issueId}', [MemoController::class, 'getMemosByIssueId']);
 
     Route::get('/plants/all', [PlantController::class, 'getAllPlants']);
+
+    Route::get('/file/getexcel', [TrackRecordIssueController::class, 'getExcelFromUrl']);
+    Route::get('/file/getexcelfile', [TrackRecordIssueController::class, 'getExcelFileFromUrl']);
+
+    Route::put('/edit-user-profile', [ManageUserController::class, 'editUserProfile']);
 });
 
 

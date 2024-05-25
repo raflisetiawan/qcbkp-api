@@ -77,34 +77,37 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/users/count', [ManageUserController::class, 'getUsersCount']);
     Route::get('/issues/count', [IssueController::class, 'getIssuesCount']);
     Route::get('/informations/count', [InformationController::class, 'getInformationsCount']);
+
+    Route::post('/issue', [IssueController::class, 'store']);
+    Route::delete('/issue/{issue}', [IssueController::class, 'destroy']);
+
+    Route::post('/quality-issue', [QualityIssueController::class, 'store']);
+    Route::delete('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'destroy']);
+    Route::put('/edit-user-profile', [ManageUserController::class, 'editUserProfile']);
+
+    Route::patch('/issue/{issue}', [IssueController::class, 'update']);
+
+    Route::patch('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'update']);
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/user/change-password', [AuthController::class, 'change_password']);
 
-    Route::post('/issue', [IssueController::class, 'store']);
     Route::get('/issue', [IssueController::class, 'index']);
-    Route::delete('/issue/{issue}', [IssueController::class, 'destroy']);
-    Route::patch('/issue/{issue}', [IssueController::class, 'update']);
+
     Route::get('/issue-by-date', [IssueController::class, 'getIssuesByDate']);
     Route::get('/issue/{id}/issue-date', [IssueController::class, 'getIssueDateById']);
     Route::get('/issue/{id}/quality-issue', [IssueController::class, 'getIssueAndQualityIssues']);
-
     Route::get('/issue/{id}/detail', [IssueController::class, 'getIssueDetails']);
 
     Route::get('/issues-with-quality', [IssueController::class, 'getAllIssuesWithQualityIssuesByDate']);
 
-    Route::post('/quality-issue', [QualityIssueController::class, 'store']);
     Route::get('/quality-issue', [QualityIssueController::class, 'index']);
     Route::get('/quality-issue/get-sugestion/suggestions', [QualityIssueController::class, 'getProblemSuggestions']);
     Route::get('/quality-issue/get-sugestion-solution/suggestions', [QualityIssueController::class, 'getSolutionsSuggestions']);
     Route::get('/quality-issue/get-sugestion-impact/suggestions', [QualityIssueController::class, 'getImpactSuggestions']);
-    Route::delete('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'destroy']);
-    Route::patch('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'update']);
+
     Route::get('/quality-issues/{issueId}', [QualityIssueController::class, 'getQualityIssuesByIssueId']);
     Route::get('/quality-issue/{qualityIssue}', [QualityIssueController::class, 'show']);
-
-
-    Route::put('/edit-user-profile', [ManageUserController::class, 'editUserProfile']);
 
     Route::get('/manage-information', [InformationController::class, 'index']);
     Route::get('/manage-information/{information}', [InformationController::class, 'show']);
@@ -117,7 +120,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 Route::middleware(['auth:sanctum', 'manager'])->group(function () {
-
     Route::post('/memo', [MemoController::class, 'store']);
     Route::patch('/memo/{memo}', [MemoController::class, 'update']);
 
